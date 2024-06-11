@@ -1,5 +1,6 @@
 package model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Transaction {
@@ -21,6 +22,12 @@ public class Transaction {
     /** Total amount of non-EBT items in the transaction */
     private double nonEbtTotal;
 
+    /** Transaction ID */
+    private long transactionId;
+
+    /** Transaction date */
+    private LocalDateTime transactionDate;
+
     /**
      * Constructor for Transaction
      * @param items List of items in the transaction
@@ -30,6 +37,18 @@ public class Transaction {
         this.items = items;
         this.paymentMethod = paymentMethod;
         this.calculateTotals();
+    }
+
+    /**
+     * Constructor for Transaction with no parameters
+     */
+    public Transaction() {
+        this.items = null;
+        this.paymentMethod = null;
+        this.totalAmount = 0;
+        this.totalTax = 0;
+        this.ebtTotal = 0;
+        this.nonEbtTotal = 0;
     }
 
     /**
@@ -165,5 +184,37 @@ public class Transaction {
      */
     public void setNonEbtTotal(double nonEbtTotal) {
         this.nonEbtTotal = nonEbtTotal;
+    }
+
+    /**
+     * Get the transaction ID
+     * @return Transaction ID
+     */
+    public long getTransactionId() {
+        return transactionId;
+    }
+
+    /**
+     * Set the transaction ID
+     * @param transactionId Transaction ID
+     */
+    public void setTransactionId(long transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    /**
+     * Get the transaction date
+     * @return Transaction date
+     */
+    public LocalDateTime getTransactionDate() {
+        return transactionDate;
+    }
+
+    /**
+     * Set the transaction date
+     * @param transactionDate Transaction date
+     */
+    public void setTransactionDate(LocalDateTime transactionDate) {
+        this.transactionDate = transactionDate;
     }
 }
