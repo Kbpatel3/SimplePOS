@@ -33,6 +33,18 @@ public class Item {
     }
 
     /**
+     * Constructor for the Item class with no parameters
+     * Used for creating an empty item
+     */
+    public Item() {
+        this.name = "";
+        this.barcode = "";
+        this.price = 0;
+        this.taxRate = 0;
+        this.isEbtEligible = false;
+    }
+
+    /**
      * Getter for the name of the item
      * @return The name of the item
      */
