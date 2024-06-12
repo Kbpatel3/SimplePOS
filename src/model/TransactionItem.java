@@ -7,8 +7,8 @@ public class TransactionItem {
     /** Represents the transaction ID */
     private int transactionId;
 
-    /** Represents the Item ID */
-    private String itemId;
+    /** Represents the Item ID (Reference to auto-generated id in Items) */
+    private int itemId;
 
     /** Represents the quantity of the item */
     private int quantity;
@@ -28,8 +28,7 @@ public class TransactionItem {
     public TransactionItem(Item item, int quantity) {
         this.item = item;
         this.quantity = quantity;
-        this.itemId = item.getBarcode();
-        this.subtotal = item.getPrice() * quantity;
+        this.subtotal = item.getPrice() * quantity * (1 + item.getTaxRate());
     }
 
     /**
@@ -38,7 +37,6 @@ public class TransactionItem {
     public TransactionItem() {
         this.item = null;
         this.quantity = 0;
-        this.itemId = "";
         this.subtotal = 0;
     }
 
@@ -110,7 +108,7 @@ public class TransactionItem {
      * Returns the item ID
      * @return the item ID
      */
-    public String getItemId() {
+    public int getItemId() {
         return itemId;
     }
 
@@ -118,7 +116,7 @@ public class TransactionItem {
      * Sets the item ID
      * @param itemId the item ID
      */
-    public void setItemId(String itemId) {
+    public void setItemId(int itemId) {
         this.itemId = itemId;
     }
 

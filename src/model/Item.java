@@ -16,6 +16,9 @@ public class Item {
     /** Whether the item is EBT eligible */
     private boolean isEbtEligible;
 
+    /** Item id (Auto-generated) */
+    private int itemId;
+
     /**
      * Constructor for the Item class
      * @param name The name of the item
@@ -42,6 +45,7 @@ public class Item {
         this.price = 0;
         this.taxRate = 0;
         this.isEbtEligible = false;
+        this.itemId = 0;
     }
 
     /**
@@ -122,5 +126,21 @@ public class Item {
      */
     public void setEbtEligible(boolean ebtEligible) {
         isEbtEligible = ebtEligible;
+    }
+
+    /**
+     * Getter for the item id
+     * @return The item id
+     */
+    public int getItemId() {
+        return itemId;
+    }
+
+    /**
+     * Setter for the item id
+     * @param itemId The item id
+     */
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
     }
 }

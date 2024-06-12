@@ -85,8 +85,6 @@ public class Transaction {
 
         if (paymentMethod == PaymentMethod.EBT) {
             this.totalAmount = this.ebtTotal + this.nonEbtTotal;
-        } else {
-            this.totalAmount += this.totalTax;
         }
     }
 
@@ -156,7 +154,7 @@ public class Transaction {
 
     /**
      * Get the total amount of EBT items in the transaction
-     * @return
+     * @return Total amount of EBT items in the transaction
      */
     public double getEbtTotal() {
         return ebtTotal;

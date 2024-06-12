@@ -29,7 +29,7 @@ public class JdbcItemRepository implements ItemRepository {
                     "VALUES (?, ?, ?, ?, ?)";
 
             // Prepare the query
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
+            try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 // Set the parameters
                 statement.setString(1, item.getName());
                 statement.setString(2, item.getBarcode());
@@ -39,6 +39,14 @@ public class JdbcItemRepository implements ItemRepository {
 
                 // Execute the query
                 statement.executeUpdate();
+
+                // Get the generated key
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        item.setItemId(generatedKeys.getInt(1));
+                    }
+                }
+
             }
         } catch (SQLException e) {
             System.err.println("Error: " + e.getMessage());
@@ -128,6 +136,7 @@ public class JdbcItemRepository implements ItemRepository {
                         item.setPrice(resultSet.getDouble("price"));
                         item.setTaxRate(resultSet.getDouble("tax_rate"));
                         item.setEbtEligible(resultSet.getBoolean("ebt_eligible"));
+                        item.setItemId(resultSet.getInt("itemid"));
                     }
                 }
             }

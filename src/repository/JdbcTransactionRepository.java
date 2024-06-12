@@ -33,7 +33,7 @@ public class JdbcTransactionRepository implements TransactionRepository {
                     "non_ebt_total, payment_method) VALUES (?, ?, ?, ?, ?)";
 
             // Prepare the query
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
+            try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 // Set the parameters
                 statement.setDouble(1, transaction.getTotalAmount());
                 statement.setDouble(2, transaction.getTotalTax());
@@ -58,14 +58,15 @@ public class JdbcTransactionRepository implements TransactionRepository {
 
     private void saveTransactionItems(List<TransactionItem> items, long transactionId,
                                       Connection connection) throws SQLException {
-        String query = "INSERT INTO transaction_items (transaction_id, item_id, quantity) VALUES" +
-                " (?, ?, ?)";
+        String query = "INSERT INTO transaction_items (transaction_id, item_id, quantity, " +
+                "subtotal) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             for (TransactionItem item : items) {
                 statement.setLong(1, transactionId);
-                statement.setString(2, item.getItem().getBarcode());
+                statement.setInt(2, item.getItem().getItemId());
                 statement.setInt(3, item.getQuantity());
+                statement.setDouble(4, item.getSubtotal());
                 statement.executeUpdate();
             }
             statement.executeBatch();
@@ -158,7 +159,7 @@ public class JdbcTransactionRepository implements TransactionRepository {
 
     private TransactionItem mapRowToTransactionItem(ResultSet rs) throws SQLException {
         int transactionItemId = rs.getInt("transaction_item_id");
-        String itemId = rs.getString("item_id");
+        int itemId = rs.getInt("item_id");
         int quantity = rs.getInt("quantity");
         double subtotal = rs.getDouble("subtotal");
 
@@ -174,13 +175,13 @@ public class JdbcTransactionRepository implements TransactionRepository {
         return item;
     }
 
-    private Item findItemById(String itemId) {
+    private Item findItemById(int itemId) {
         String query = "SELECT * FROM items WHERE item_id = ?";
         Item item = null;
 
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
             try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setString(1, itemId);
+                statement.setInt(1, itemId);
 
                 try (ResultSet rs = statement.executeQuery()) {
                     if (rs.next()) {
@@ -196,8 +197,9 @@ public class JdbcTransactionRepository implements TransactionRepository {
     }
 
     private Item mapRowToItem(ResultSet rs) throws SQLException {
-        String itemId = rs.getString("item_id");
+        int itemId = rs.getInt("itemid");
         String name = rs.getString("name");
+        String barcode = rs.getString("barcode");
         double price = rs.getDouble("price");
         double taxRate = rs.getDouble("tax_rate");
         boolean isEbtEligible = rs.getBoolean("is_ebt_eligible");
@@ -205,11 +207,12 @@ public class JdbcTransactionRepository implements TransactionRepository {
 
         Item item = new Item();
 
-        item.setBarcode(itemId);
+        item.setBarcode(barcode);
         item.setName(name);
         item.setPrice(price);
         item.setTaxRate(taxRate);
         item.setEbtEligible(isEbtEligible);
+        item.setItemId(itemId);
 
         return item;
     }
